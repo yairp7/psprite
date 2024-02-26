@@ -116,11 +116,3 @@ func NewSpriteAnimation(
 		IsLoop:        isLoop,
 	}
 }
-
-func (s *AnimatedSprite) DebugPrint() string {
-	if s.currentAnimation == nil {
-		fmt.Sprintln("MAS: No animation")
-	}
-
-	return fmt.Sprintf("MAS: offsetX: %d, offsetY: %d, currentFrame: %d, totalFrames: %d\n", s.currentAnimation.offsetX, s.currentAnimation.offsetY, s.currentAnimation.currentFrame, s.currentAnimation.totalFrames)
-}
