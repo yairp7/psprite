@@ -17,6 +17,7 @@ type SpriteAnimation struct {
 	totalFrames   int
 	frameRate     int
 	IsLoop        bool
+	IsReversed    bool
 }
 
 type AnimatedSprite struct {
@@ -97,6 +98,17 @@ func (s *AnimatedSprite) Pause() {
 
 func (s *AnimatedSprite) Reset() {
 	s.currentAnimation.currentFrame = 0
+	if s.IsReversed {
+		s.currentAnimation.currentFrame = s.currentAnimation.totalFrames - 1
+	}
+}
+
+func (s *AnimatedSprite) AnimationNames() []string {
+	animationNames := []string{}
+	for k := range s.animations {
+		animationNames = append(animationNames, k)
+	}
+	return animationNames
 }
 
 func NewSpriteAnimation(
@@ -105,6 +117,7 @@ func NewSpriteAnimation(
 	totalFrames int,
 	frameDuration float64,
 	isLoop bool,
+	isReversed bool,
 ) *SpriteAnimation {
 	return &SpriteAnimation{
 		offsetX:       offsetX,
@@ -114,5 +127,6 @@ func NewSpriteAnimation(
 		totalTime:     0,
 		frameDuration: frameDuration,
 		IsLoop:        isLoop,
+		IsReversed:    isReversed,
 	}
 }

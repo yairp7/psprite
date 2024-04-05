@@ -13,6 +13,7 @@ type Sprite struct {
 	OffsetY    int
 	Width      int
 	Height     int
+	Src        string
 	img        *ebiten.Image
 	IsReversed bool
 }
@@ -25,15 +26,20 @@ func NewSprite(width, height int) *Sprite {
 	}
 }
 
-func (s *Sprite) LoadImage(src string) error {
+func (s *Sprite) UseImage(img *ebiten.Image) {
+	s.img = img
+}
+
+func (s *Sprite) LoadImage(src string) (*ebiten.Image, error) {
+	s.Src = src
 	b, err := os.ReadFile(src)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	img, _, err := image.Decode(bytes.NewReader(b))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	origImage := ebiten.NewImageFromImage(img)
@@ -42,12 +48,11 @@ func (s *Sprite) LoadImage(src string) error {
 	newImage := ebiten.NewImage(size.X, size.Y)
 
 	op := &ebiten.DrawImageOptions{}
-	op.ColorScale.ScaleAlpha(0.95)
 	newImage.DrawImage(origImage, op)
 
 	s.img = newImage
 
-	return nil
+	return s.img, nil
 }
 
 func (s *Sprite) getImageWithOffset(offsetX, offsetY int) *ebiten.Image {
