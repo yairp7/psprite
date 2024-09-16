@@ -3,19 +3,22 @@ package psprite
 import (
 	"bytes"
 	"image"
+	"image/color"
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Sprite struct {
-	OffsetX    int
-	OffsetY    int
-	Width      int
-	Height     int
-	Src        string
-	img        *ebiten.Image
-	IsReversed bool
+	offsetX     int
+	offsetY     int
+	Width       int
+	Height      int
+	Src         string
+	img         *ebiten.Image
+	selectedImg *ebiten.Image
+	IsReversed  bool
+	isDirty     bool
 }
 
 func NewSprite(width, height int) *Sprite {
@@ -23,7 +26,14 @@ func NewSprite(width, height int) *Sprite {
 		Width:      width,
 		Height:     height,
 		IsReversed: false,
+		isDirty:    false,
 	}
+}
+
+func (s *Sprite) SetOffset(x, y int) {
+	s.offsetX = x
+	s.offsetY = y
+	s.isDirty = true
 }
 
 func (s *Sprite) UseImage(img *ebiten.Image) {
@@ -60,7 +70,19 @@ func (s *Sprite) getImageWithOffset(offsetX, offsetY int) *ebiten.Image {
 }
 
 func (s *Sprite) GetImage() *ebiten.Image {
-	return s.getImageWithOffset(s.OffsetX, s.OffsetY)
+	if s.isDirty || s.selectedImg == nil {
+		s.selectedImg = s.getImageWithOffset(s.offsetX, s.offsetY)
+		s.isDirty = false
+	}
+	return s.selectedImg
+}
+
+func (s *Sprite) GetRGBA64At(x, y int) color.RGBA64 {
+	return s.GetImage().RGBA64At(x, y)
+}
+
+func (s *Sprite) GetColorAt(x, y int) color.Color {
+	return s.GetImage().At(x, y)
 }
 
 func (s *Sprite) Reverse() {

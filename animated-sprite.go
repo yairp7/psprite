@@ -80,7 +80,7 @@ func (s *AnimatedSprite) GetImage() *ebiten.Image {
 	// In-case the animation sheet doesn't take the entire width
 	sheetOffsetX := s.img.Bounds().Dx() - animationSheetWidth
 	x := s.currentAnimation.offsetX + s.Width*s.currentAnimation.currentFrame
-	y := s.OffsetY + s.currentAnimation.offsetY
+	y := s.offsetY + s.currentAnimation.offsetY
 	if s.IsReversed {
 		x = sheetOffsetX + animationSheetWidth - (s.Width * (s.currentAnimation.currentFrame + 1))
 	}
