@@ -19,6 +19,7 @@ type Sprite struct {
 	selectedImg *ebiten.Image
 	IsReversed  bool
 	isDirty     bool
+	offsetDict  map[string][]int
 }
 
 func NewSprite(width, height int) *Sprite {
@@ -96,4 +97,21 @@ func (s *Sprite) Reverse() {
 	op.GeoM.Translate(float64(size.X), 0)
 	result.DrawImage(s.img, op)
 	s.img = result
+}
+
+func (s *Sprite) SaveOffsetByName(name string, offsetX, offsetY int) {
+	if s.offsetDict == nil {
+		s.offsetDict = make(map[string][]int)
+	}
+
+	s.offsetDict[name] = []int{offsetX, offsetY}
+}
+
+func (s *Sprite) GetOffsetByName(name string) (offsetX, offsetY int) {
+	if s.offsetDict == nil {
+		return 0, 0
+	}
+
+	p := s.offsetDict[name]
+	return p[0], p[1]
 }
